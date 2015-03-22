@@ -61,8 +61,11 @@ public class Application {
             labyrinthColumns = Integer.parseInt(args[2]);
         }
         String path = System.getProperty("java.library.path");
-        System.err.println(path);
-        System.setProperty("java.library.path", path + ":" + LIBRARIES_PATH);
+        char colon = path.charAt(path.length() - 2);
+        if (colon == ':' || colon == ';') {
+            System.setProperty("java.library.path", path + colon + LIBRARIES_PATH);
+        }
+        System.err.println(path + colon + LIBRARIES_PATH);
 
         new Application(randomLabyrinth, labyrinthColumns, labyrinthRows).run();
     }
