@@ -15,18 +15,23 @@ public class Labyrinth {
     private final int rows;
     private final int columns;
     private final boolean[][] empty;
+    private final Random random;
 
     private int startRow = -1;
     private int startColumn = -1;
 
-    public Labyrinth(int rows, int columns) {
+    public Labyrinth(int rows, int columns, boolean isRandom) {
         this.rows = rows;
         this.columns = columns;
+        if (isRandom) {
+            random = new Random(System.currentTimeMillis());
+        } else {
+            random = new Random(10);
+        }
         empty = new boolean[rows][columns];
     }
 
     public void fillRandomly() {
-        Random random = new Random(10);
         int emptyCount = 0;
         for (int row = 1; row < rows - 1; ++row) {
             for (int column = 1; column < columns - 1; ++column) {

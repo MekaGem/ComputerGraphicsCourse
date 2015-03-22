@@ -25,6 +25,13 @@ public class Application {
 
     private long window;
 
+    private final boolean randomLabyrinth;
+    private final int labyrinthRows;
+    private final int labyrinthColumns;
+
+    private final float movementSpeed = 0.2f;
+    private final float angularSpeed = 90;
+
     private boolean leftPressed = false;
     private boolean rightPressed = false;
     private boolean upPressed = false;
@@ -40,8 +47,27 @@ public class Application {
     private float angle;
 
     public static void main(String[] args) {
+        boolean randomLabyrinth = false;
+        int labyrinthRows = 10;
+        int labyrinthColumns = 10;
+
+        if (args.length > 0) {
+            randomLabyrinth = Boolean.parseBoolean(args[0]);
+        }
+        if (args.length > 1) {
+            labyrinthRows = Integer.parseInt(args[1]);
+        }
+        if (args.length > 2) {
+            labyrinthColumns = Integer.parseInt(args[2]);
+        }
         System.setProperty("java.library.path", LIBRARIES_PATH);
-        new Application().run();
+        new Application(randomLabyrinth, labyrinthColumns, labyrinthRows).run();
+    }
+
+    public Application(boolean randomLabyrinth, int labyrinthRows, int labyrinthColumns) {
+        this.randomLabyrinth = randomLabyrinth;
+        this.labyrinthRows = labyrinthRows;
+        this.labyrinthColumns = labyrinthColumns;
     }
 
     public void run() {
@@ -135,7 +161,7 @@ public class Application {
         glfwSwapInterval(1);
         glfwShowWindow(window);
 
-        Labyrinth labyrinth = new Labyrinth(10, 10);
+        Labyrinth labyrinth = new Labyrinth(labyrinthRows, labyrinthColumns, randomLabyrinth);
         labyrinth.fillRandomly();
         labyrinth.print();
 
@@ -183,13 +209,12 @@ public class Application {
         while (glfwWindowShouldClose(window) == GL_FALSE) {
             double time = glfwGetTime();
             float delta = (float)(time - prevTime);
-            angle += -90 * rotationDirction * delta;
+            angle += -angularSpeed * rotationDirction * delta;
             position.plus(
-                    0.05f * movementDirection * delta * (float)Math.cos(Math.toRadians(angle - 90)),
+                    movementSpeed * movementDirection * delta * (float)Math.cos(Math.toRadians(angle - 90)),
                     0,
-                    0.05f * movementDirection * delta * (float)Math.sin(Math.toRadians(angle - 90))
+                    movementSpeed * movementDirection * delta * (float)Math.sin(Math.toRadians(angle - 90))
             );
-
             prevTime = time;
 
             glMatrixMode(GL_MODELVIEW);
@@ -226,69 +251,4 @@ public class Application {
         glDeleteBuffers(vboVertexHandle);
         glDeleteBuffers(vboColorHandle);
     }
-
-//    private FloatBuffer initVertexBuffer() {
-//        FloatBuffer buffer = BufferUtils.createFloatBuffer(3 * 3 * 2 * 6);
-//        float x = -0.5f;
-//        float y = -0.5f;
-//        float z = -0.5f;
-//        float w = 1.0f;
-//        float h = 1.0f;
-//        float d = 1.0f;
-//        float[][] points = new float[8][3];
-//
-//        points[0][0] = x;
-//        points[0][1] = y;
-//        points[0][2] = z;
-//
-//        points[1][0] = x;
-//        points[1][1] = y + h;
-//        points[1][2] = z;
-//
-//        points[2][0] = x + w;
-//        points[2][1] = y + h;
-//        points[2][2] = z;
-//
-//        points[3][0] = x + w;
-//        points[3][1] = y;
-//        points[3][2] = z;
-//
-//        points[4][0] = x;
-//        points[4][1] = y;
-//        points[4][2] = z + d;
-//
-//        points[5][0] = x;
-//        points[5][1] = y + h;
-//        points[5][2] = z + d;
-//
-//        points[6][0] = x + w;
-//        points[6][1] = y + h;
-//        points[6][2] = z + d;
-//
-//        points[7][0] = x + w;
-//        points[7][1] = y;
-//        points[7][2] = z + d;
-//
-//        buffer.put(points[0]).put(points[2]).put(points[1]);
-//        buffer.put(points[0]).put(points[3]).put(points[2]);
-//
-//        buffer.put(points[0]).put(points[1]).put(points[5]);
-//        buffer.put(points[0]).put(points[5]).put(points[4]);
-//
-//        buffer.put(points[3]).put(points[6]).put(points[2]);
-//        buffer.put(points[3]).put(points[7]).put(points[6]);
-//
-//        buffer.put(points[1]).put(points[6]).put(points[5]);
-//        buffer.put(points[1]).put(points[2]).put(points[6]);
-//
-//        buffer.put(points[0]).put(points[7]).put(points[4]);
-//        buffer.put(points[0]).put(points[3]).put(points[7]);
-//
-//        buffer.put(points[4]).put(points[5]).put(points[6]);
-//        buffer.put(points[4]).put(points[6]).put(points[7]);
-//
-//        buffer.flip();
-//
-//        return buffer;
-//    }
 }
