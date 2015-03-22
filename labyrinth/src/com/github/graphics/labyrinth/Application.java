@@ -60,7 +60,10 @@ public class Application {
         if (args.length > 2) {
             labyrinthColumns = Integer.parseInt(args[2]);
         }
-        System.setProperty("java.library.path", LIBRARIES_PATH);
+        String path = System.getProperty("java.library.path");
+        System.err.println(path);
+        System.setProperty("java.library.path", path + ":" + LIBRARIES_PATH);
+
         new Application(randomLabyrinth, labyrinthColumns, labyrinthRows).run();
     }
 
